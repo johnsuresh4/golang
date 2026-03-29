@@ -1,19 +1,70 @@
 package main
 
-import "fmt"
+import (
+	"booking-app/helper"
+	"fmt"
+	"strings"
+)
+
+var conferenceName string = "Go Conference"
+var conferenceTickets int = 50
+var remainingTickets uint = 50
+var bookings = []string{}
+
+// var bookings [50]string // This is array
+// var bookings = []string{} // This is slice
+// bookings := []string{} //This syntax can be used in func body only
 
 func main() {
-	conferenceName := "Go Conference"
-	var conferenceTickets int = 50
-	var remainingTickets uint = 50
-	// var bookings [50]string // This is array
-	// var bookings = []string{} // This is slice
-	bookings := []string{}
+	greetUser()
 
+	for {
+		firstName, lastName, email, userTickets := getUserData()
+
+		isValidEmail, isValidName, isValidUserTicket := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
+
+		if !isValidName {
+			fmt.Println("Please enter more than 3 chars")
+			continue
+		}
+
+		if !isValidEmail {
+			fmt.Println("Please enter valid email")
+			continue
+		}
+
+		if isValidUserTicket {
+			fmt.Printf("We only have %v tickets remaining, so you can't book %v tickets\n", remainingTickets, userTickets)
+			continue
+		}
+
+		remainingTickets = uint(remainingTickets) - uint(userTickets)
+		bookings = append(bookings, firstName+" "+lastName)
+
+		fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
+		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+
+		printFirstNames()
+
+		var noTicketsRemaining bool = remainingTickets == 0
+
+		if noTicketsRemaining {
+			// end the program
+			fmt.Println("Our conference is booked out. Come next year.")
+			break
+		}
+
+	}
+
+}
+
+func greetUser() {
 	fmt.Printf("Welcome to %v booking application\n", conferenceName)
 	fmt.Printf("We have total of %v tickets and %v are still available.\n", conferenceTickets, remainingTickets)
 	fmt.Printf("Get your tickets here to attend\n")
+}
 
+func getUserData() (string, string, string, int) {
 	var firstName string
 	var lastName string
 	var email string
@@ -31,16 +82,17 @@ func main() {
 	fmt.Print("Please enter number of ticket: ")
 	fmt.Scan(&userTickets)
 
-	remainingTickets = uint(conferenceTickets) - uint(userTickets)
+	return firstName, lastName, email, userTickets
+}
 
-	fmt.Printf("%v %v has booked %v tickets for %v\n", firstName, lastName, userTickets, conferenceName)
-	fmt.Printf("We have total of %v tickets and %v are still available.\n", conferenceTickets, remainingTickets)
-	bookings = append(bookings, firstName+" "+lastName)
+func printFirstNames() {
+	firstNames := []string{}
 
-	fmt.Printf("The whole slice: %v\n", bookings)
-	fmt.Printf("The first value: %v\n", bookings[0])
-	fmt.Printf("Slice type: %T\n", bookings)
-	fmt.Printf("Slice length: %v\n", len(bookings))
+	for _, booking := range bookings {
+		var names = strings.Fields(booking)
+		var firstName = names[0]
+		firstNames = append(firstNames, firstName)
+	}
+	fmt.Printf("The first names of bookings are: %v\n", firstNames)
 
-	fmt.Println(bookings)
 }

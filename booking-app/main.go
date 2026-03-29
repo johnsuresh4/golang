@@ -1,15 +1,16 @@
 package main
 
 import (
-	"booking-app/helper"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 var conferenceName string = "Go Conference"
 var conferenceTickets int = 50
 var remainingTickets uint = 50
-var bookings = []string{}
+var bookings = make([]map[string]string, 0)
+
+// Above statement, we are creating list of maps
 
 // var bookings [50]string // This is array
 // var bookings = []string{} // This is slice
@@ -21,7 +22,7 @@ func main() {
 	for {
 		firstName, lastName, email, userTickets := getUserData()
 
-		isValidEmail, isValidName, isValidUserTicket := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
+		isValidEmail, isValidName, isValidUserTicket := validateUserInput(firstName, lastName, email, userTickets)
 
 		if !isValidName {
 			fmt.Println("Please enter more than 3 chars")
@@ -39,7 +40,15 @@ func main() {
 		}
 
 		remainingTickets = uint(remainingTickets) - uint(userTickets)
-		bookings = append(bookings, firstName+" "+lastName)
+
+		// create a map for user
+		var userData = make(map[string]string)
+		userData["firstName"] = firstName
+		userData["lastName"] = lastName
+		userData["email"] = email
+		userData["numberOfTickets"] = strconv.FormatInt(int64(userTickets), 10)
+
+		bookings = append(bookings, userData)
 
 		fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
 		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
@@ -89,9 +98,8 @@ func printFirstNames() {
 	firstNames := []string{}
 
 	for _, booking := range bookings {
-		var names = strings.Fields(booking)
-		var firstName = names[0]
-		firstNames = append(firstNames, firstName)
+		// var firstName = names[0]
+		firstNames = append(firstNames, booking["firstName"])
 	}
 	fmt.Printf("The first names of bookings are: %v\n", firstNames)
 

@@ -24,34 +24,12 @@ func main() {
 
 		isValidEmail, isValidName, isValidUserTicket := validateUserInput(firstName, lastName, email, userTickets)
 
-		if !isValidName {
-			fmt.Println("Please enter more than 3 chars")
+		printValidateErrors(isValidName, isValidEmail, isValidUserTicket, userTickets)
+		if !isValidName || !isValidEmail || !isValidUserTicket {
 			continue
 		}
 
-		if !isValidEmail {
-			fmt.Println("Please enter valid email")
-			continue
-		}
-
-		if isValidUserTicket {
-			fmt.Printf("We only have %v tickets remaining, so you can't book %v tickets\n", remainingTickets, userTickets)
-			continue
-		}
-
-		remainingTickets = uint(remainingTickets) - uint(userTickets)
-
-		// create a map for user
-		var userData = make(map[string]string)
-		userData["firstName"] = firstName
-		userData["lastName"] = lastName
-		userData["email"] = email
-		userData["numberOfTickets"] = strconv.FormatInt(int64(userTickets), 10)
-
-		bookings = append(bookings, userData)
-
-		fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
-		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+		bookTickets(firstName, lastName, email, userTickets)
 
 		printFirstNames()
 
@@ -96,13 +74,40 @@ func getUserData() (string, string, string, int) {
 
 func printFirstNames() {
 	firstNames := []string{}
-
 	for _, booking := range bookings {
-		// var firstName = names[0]
 		firstNames = append(firstNames, booking["firstName"])
 	}
 	fmt.Printf("The first names of bookings are: %v\n", firstNames)
+}
 
+func bookTickets(firstName string, lastName string, email string, userTickets int) {
+	remainingTickets = uint(remainingTickets) - uint(userTickets)
+
+	// create a map for user
+	var userData = make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["numberOfTickets"] = strconv.FormatInt(int64(userTickets), 10)
+
+	bookings = append(bookings, userData)
+
+	fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
+	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+}
+
+func printValidateErrors(isValidName bool, isValidEmail bool, isValidUserTicket bool, userTickets int) {
+	if !isValidName {
+		fmt.Println("Please enter more than 3 chars")
+	}
+
+	if !isValidEmail {
+		fmt.Println("Please enter valid email")
+	}
+
+	if !isValidUserTicket {
+		fmt.Printf("We only have %v tickets remaining, so you can't book %v tickets\n", remainingTickets, userTickets)
+	}
 }
 
 // Learn Go routines

@@ -2,13 +2,19 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 var conferenceName string = "Go Conference"
 var conferenceTickets int = 50
 var remainingTickets uint = 50
-var bookings = make([]map[string]string, 0)
+var bookings = make([]UserData, 0)
+
+type UserData struct {
+	firstName       string
+	lastName        string
+	email           string
+	numberOfTickets int
+}
 
 // Above statement, we are creating list of maps
 
@@ -42,11 +48,12 @@ func main() {
 		remainingTickets = uint(remainingTickets) - uint(userTickets)
 
 		// create a map for user
-		var userData = make(map[string]string)
-		userData["firstName"] = firstName
-		userData["lastName"] = lastName
-		userData["email"] = email
-		userData["numberOfTickets"] = strconv.FormatInt(int64(userTickets), 10)
+		var userData = UserData{
+			firstName:       firstName,
+			lastName:        lastName,
+			email:           email,
+			numberOfTickets: userTickets,
+		}
 
 		bookings = append(bookings, userData)
 
@@ -54,6 +61,8 @@ func main() {
 		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
 
 		printFirstNames()
+
+		fmt.Printf("Bookings list %v\n", bookings)
 
 		var noTicketsRemaining bool = remainingTickets == 0
 
@@ -99,7 +108,7 @@ func printFirstNames() {
 
 	for _, booking := range bookings {
 		// var firstName = names[0]
-		firstNames = append(firstNames, booking["firstName"])
+		firstNames = append(firstNames, booking.firstName)
 	}
 	fmt.Printf("The first names of bookings are: %v\n", firstNames)
 

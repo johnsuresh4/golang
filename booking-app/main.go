@@ -8,7 +8,14 @@ import (
 var conferenceName string = "Go Conference"
 var conferenceTickets int = 50
 var remainingTickets uint = 50
-var bookings = make([]map[string]string, 0)
+var bookings = make([]UserData, 0)
+
+type UserData struct {
+	firstName       string
+	lastName        string
+	email           string
+	numberOfTickets int
+}
 
 // Above statement, we are creating list of maps
 
@@ -32,6 +39,8 @@ func main() {
 		bookTickets(firstName, lastName, email, userTickets)
 
 		printFirstNames()
+
+		fmt.Printf("Bookings list %v\n", bookings)
 
 		var noTicketsRemaining bool = remainingTickets == 0
 

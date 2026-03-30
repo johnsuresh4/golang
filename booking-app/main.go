@@ -104,3 +104,5 @@ func printFirstNames() {
 	fmt.Printf("The first names of bookings are: %v\n", firstNames)
 
 }
+
+// Learn Go routines

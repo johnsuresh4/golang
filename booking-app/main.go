@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"strconv"
+	"time"
 )
 
 var conferenceName string = "Go Conference"
@@ -37,6 +37,7 @@ func main() {
 		}
 
 		bookTickets(firstName, lastName, email, userTickets)
+		go sendTicket(firstName, lastName, email, userTickets)
 
 		printFirstNames()
 
@@ -84,7 +85,7 @@ func getUserData() (string, string, string, int) {
 func printFirstNames() {
 	firstNames := []string{}
 	for _, booking := range bookings {
-		firstNames = append(firstNames, booking["firstName"])
+		firstNames = append(firstNames, booking.firstName)
 	}
 	fmt.Printf("The first names of bookings are: %v\n", firstNames)
 }
@@ -93,11 +94,12 @@ func bookTickets(firstName string, lastName string, email string, userTickets in
 	remainingTickets = uint(remainingTickets) - uint(userTickets)
 
 	// create a map for user
-	var userData = make(map[string]string)
-	userData["firstName"] = firstName
-	userData["lastName"] = lastName
-	userData["email"] = email
-	userData["numberOfTickets"] = strconv.FormatInt(int64(userTickets), 10)
+	var userData = UserData{
+		firstName:       firstName,
+		lastName:        lastName,
+		email:           email,
+		numberOfTickets: userTickets,
+	}
 
 	bookings = append(bookings, userData)
 
@@ -120,3 +122,15 @@ func printValidateErrors(isValidName bool, isValidEmail bool, isValidUserTicket 
 }
 
 // Learn Go routines
+
+func sendTicket(firstName string, lastName string, email string, userTickets int) {
+
+	time.Sleep(10 * time.Second)
+
+	var ticket = fmt.Sprintf("%v tickets for %v %v", userTickets, firstName, lastName)
+
+	fmt.Println("########################")
+	fmt.Printf("Sending ticket:\n %v \n to email address %v\n", ticket, email)
+	fmt.Println("########################")
+
+}

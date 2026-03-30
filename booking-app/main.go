@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -23,35 +24,35 @@ type UserData struct {
 // var bookings = []string{} // This is slice
 // bookings := []string{} //This syntax can be used in func body only
 
+var wg = sync.WaitGroup{}
+
 func main() {
 	greetUser()
 
-	for {
-		firstName, lastName, email, userTickets := getUserData()
+	firstName, lastName, email, userTickets := getUserData()
 
-		isValidEmail, isValidName, isValidUserTicket := validateUserInput(firstName, lastName, email, userTickets)
+	isValidEmail, isValidName, isValidUserTicket := validateUserInput(firstName, lastName, email, userTickets)
 
-		printValidateErrors(isValidName, isValidEmail, isValidUserTicket, userTickets)
-		if !isValidName || !isValidEmail || !isValidUserTicket {
-			continue
-		}
+	printValidateErrors(isValidName, isValidEmail, isValidUserTicket, userTickets)
+	if !isValidName || !isValidEmail || !isValidUserTicket {
+	}
 
-		bookTickets(firstName, lastName, email, userTickets)
-		go sendTicket(firstName, lastName, email, userTickets)
+	bookTickets(firstName, lastName, email, userTickets)
+	wg.Add(1)
+	go sendTicket(firstName, lastName, email, userTickets)
 
-		printFirstNames()
+	printFirstNames()
 
-		fmt.Printf("Bookings list %v\n", bookings)
+	fmt.Printf("Bookings list %v\n", bookings)
 
-		var noTicketsRemaining bool = remainingTickets == 0
+	var noTicketsRemaining bool = remainingTickets == 0
 
-		if noTicketsRemaining {
-			// end the program
-			fmt.Println("Our conference is booked out. Come next year.")
-			break
-		}
+	if noTicketsRemaining {
+		// end the program
+		fmt.Println("Our conference is booked out. Come next year.")
 
 	}
+	wg.Wait()
 
 }
 
@@ -125,12 +126,13 @@ func printValidateErrors(isValidName bool, isValidEmail bool, isValidUserTicket 
 
 func sendTicket(firstName string, lastName string, email string, userTickets int) {
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(50 * time.Second)
 
 	var ticket = fmt.Sprintf("%v tickets for %v %v", userTickets, firstName, lastName)
 
 	fmt.Println("########################")
 	fmt.Printf("Sending ticket:\n %v \n to email address %v\n", ticket, email)
 	fmt.Println("########################")
+	wg.Done()
 
 }

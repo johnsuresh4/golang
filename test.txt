@@ -1,6 +1,0 @@
-PGHOST='ep-raspy-frog-a1nkc18z-pooler.ap-southeast-1.aws.neon.tech'
-PGDATABASE='neondb'
-PGUSER='neondb_owner'
-PGPASSWORD='npg_K7qz6MdISnmg'
-PGSSLMODE='require'
-PGCHANNELBINDING='require'
